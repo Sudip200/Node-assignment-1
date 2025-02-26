@@ -3,6 +3,7 @@ const {
   homePagehandler,
   addUserHandler,
   sendUserData,
+  listUsers,
 } = require("./controllers/controller");
 const path = require("path");
 const routesHandler = (req, res) => {
@@ -16,6 +17,9 @@ const routesHandler = (req, res) => {
   if (req.url === "/add-user" && req.method === "POST") {
     console.log("Post request");
     return sendUserData(req, res);
+  }
+  if (req.url === "/users" && req.method === "GET") {
+    return listUsers(req, res);
   }
 };
 

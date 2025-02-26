@@ -27,20 +27,56 @@ const sendUserData = (req, res) => {
   });
   req.on("end", () => {
     let parsedBody = Buffer.concat(body).toString();
-    fs.appendFile(
-      path.join(__dirname, "..", "data", "users.txt"),
-      parsedBody + "\n",
-      (err) => {
+    let firstname = parsedBody.split("&")[0].split("=")[1];
+    let lastname = parsedBody.split("&")[1].split("=")[1];
+    fs.readFile(
+      path.join(__dirname, "..", "data", "users.json"),
+      (err, data) => {
         if (err) {
           console.log(err);
           res.end();
           return;
         }
-        res.statusCode = 302;
-        res.setHeader("Location", "/");
-        res.end();
+        let users = JSON.parse(data);
+        for (let user of users) {
+          console.log(user, firstname, lastname);
+          if (user.firstname === firstname && user.lastname === lastname) {
+            res.end("User already exists");
+            return;
+          }
+        }
+        users.push({ firstname, lastname });
+        fs.writeFile(
+          path.join(__dirname, "..", "data", "users.json"),
+          JSON.stringify(users),
+          (err) => {
+            if (err) {
+              console.log(err);
+              res.end();
+              return;
+            }
+            res.end("User added successfully");
+          }
+        );
       }
     );
+  });
+};
+const listUsers = (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.statusCode = 200;
+  fs.readFile(path.join(__dirname, "..", "data", "users.json"), (err, data) => {
+    if (err) {
+      console.log(err);
+      res.end();
+      return;
+    }
+    if (data.length === 0) {
+      res.end("No user found");
+      return;
+    }
+    res.write(data);
+    res.end();
   });
 };
 
@@ -48,4 +84,5 @@ module.exports = {
   homePagehandler,
   addUserHandler,
   sendUserData,
+  listUsers,
 };

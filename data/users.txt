@@ -1,2 +1,0 @@
-firstname=sudipto&lastname=das
-firstname=jagdish&lastname=sau
