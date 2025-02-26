@@ -1,17 +1,25 @@
-const http= require('http');
-const {homeHandler} = require('./controllers/controller')
+const http = require("http");
+const {
+  homePagehandler,
+  addUserHandler,
+  sendUserData,
+} = require("./controllers/controller");
+const path = require("path");
+const routesHandler = (req, res) => {
+  console.log(req.url, req.method);
+  if (req.url === "/") {
+    return homePagehandler(req, res);
+  }
+  if (req.url === "/add-user" && req.method === "GET") {
+    return addUserHandler(req, res);
+  }
+  if (req.url === "/add-user" && req.method === "POST") {
+    console.log("Post request");
+    return sendUserData(req, res);
+  }
+};
 
-const checkRoute=(req,res)=>{
-    let route=req.url;
-    let method= req.method;
-
-    if(route=='/' &&  method =='get'){
-        return homeHandler(req,res);
-    }
-}
-
-
-const server = http.createServer(checkRoute)
-server.listen(3000,()=>{
-    console.log('Listening to server 3000')
-})
+const server = http.createServer(routesHandler);
+server.listen(3000, () => {
+  console.log("Listening to server 3000");
+});
