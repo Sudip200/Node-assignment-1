@@ -33,7 +33,7 @@ This is a simple User Management System built using **Node.js** without the use 
 2. Navigate to the project directory:
 
     ```bash
-    cd node-user-management
+    cd node-assignment-1
     ```
 
 3. Install the dependencies (if any):
@@ -100,22 +100,7 @@ The application handles errors like:
 - **Invalid input**: Returns `400 Bad Request` when the First Name or Last Name fields are missing.
 - **Duplicate user**: Returns `409 Conflict` if the user already exists in the database (text file).
 - **File read/write errors**: Returns `500 Internal Server Error` when there's an issue with file operations.
-
-## Project Structure
-
-```
-/node-user-management
-│
-├── /controllers
-│   ├── controller.js     # Handles different route logic like adding users, listing users, etc.
-├── /helpers
-│   ├── handlefiles.js    # File handling logic for reading/writing user data.
-├── /data
-│   └── users.json        # The file where user data is stored.
-├── server.js             # Main file that starts the server and handles routing.
-├── /routes
-│   ├── routes.js         # Handles routing of the server.
-└── README.md             # Project documentation.
+- 
 ```
 
 ## Status Codes Used
