@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const {errorMessage,normalMessage,listUsersdata} = require('../helpers/ui')
 const {readFile, writeFile} = require('../helpers/handlefiles')
 const homePagehandler = (req, res) => {
   res.setHeader("Content-Type", "text/html");
@@ -17,11 +16,10 @@ const sendUserData = (req, res) => {
   req.on("end", () => {
    
     let parsedBody = Buffer.concat(body).toString();
-    console.log(parsedBody);
     parsedBody = JSON.parse(parsedBody);
     let firstname = parsedBody.firstname;
     let lastname = parsedBody.lastname;
-    console.log(firstname, lastname);
+
     if(firstname ==='' || lastname ===''){
       res.statusCode = 400
       res.write('Please enter all fields');
@@ -46,7 +44,7 @@ const sendUserData = (req, res) => {
       }
       users.push({ firstname, lastname });
       console.log(users);
-      writeFile( path.join(__dirname, "..", "data", "users.json"),parsedBody,(err)=>{
+      writeFile( path.join(__dirname, "..", "data", "users.json"),JSON.stringify(users),(err)=>{
         console.log(err)
         res.write('Internal Server error')
         res.statusCode =500
@@ -54,7 +52,7 @@ const sendUserData = (req, res) => {
         return
       },()=>{
        
-        res.statusCode =200
+        res.statusCode =201
         res.write('User added sucessfully')
         res.end();
       })
@@ -77,7 +75,8 @@ const listUsers = (req, res) => {
     }
   },
   (data)=>{
-    if (data.length === 0) {
+   
+    if (JSON.parse(data.toString()).length === 0) {
       res.statusCode=404;
       res.write('No user found')
       res.end();
