@@ -27,7 +27,7 @@ This is a simple User Management System built using **Node.js** without the use 
 1. Clone this repository:
 
     ```bash
-    git clone https://github.com/your-username/node-user-management.git
+    git clone https://github.com/Sudip200/Node-assignment-1/
     ```
 
 2. Navigate to the project directory:
