@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+//  helper functions to read and write files
 const readFile =(path,errorcb,cb)=>{
    fs.readFile(path,(err,data)=>{
     if(err){
