@@ -1,4 +1,3 @@
-
 # Node.js User Management System
 
 ## Overview
@@ -26,31 +25,23 @@ This is a simple User Management System built using **Node.js** without the use 
 
 1. Clone this repository:
 
-    ```bash
-    git clone https://github.com/Sudip200/Node-assignment-1/
-    ```
+   ```bash
+   git clone https://github.com/Sudip200/Node-assignment-1/
+   ```
 
 2. Navigate to the project directory:
 
-    ```bash
-    cd node-assignment-1
-    ```
-
-3. Install the dependencies (if any):
-
-    ```bash
-    npm install
-    ```
-
-    Note: In this case, there are no external dependencies as the code is built using pure Node.js.
+   ```bash
+   cd node-assignment-1
+   ```
 
 ## Running the Application
 
 1. Start the Node.js server:
 
-    ```bash
-    node server.js
-    ```
+   ```bash
+   node server.js
+   ```
 
 2. The server will be running on **http://localhost:3000**.
 
@@ -61,24 +52,24 @@ This is a simple User Management System built using **Node.js** without the use 
 - **Description**: Displays a welcome message.
 - **Response**: Returns `200 OK` with a greeting message.
 - **Example**:
-  
-    ```json
-    "Welcome to employee management"
-    ```
+
+  ```json
+  "Welcome to employee management"
+  ```
 
 ### 2. **Add User**: `POST /add-user`
 
 - **Description**: Submits user data (First Name and Last Name) and stores it in a file. Prevents duplicate entries.
 - **Request Body** (JSON format):
 
-    ```json
-    {
-        "firstname": "sudi",
-        "lastname": "das"
-    }
-    ```
+  ```json
+  {
+    "firstname": "sudi",
+    "lastname": "das"
+  }
+  ```
 
-- **Response**: 
+- **Response**:
   - **201 Created** if the user is successfully added.
   - **400 Bad Request** if any field is empty.
   - **500 Internal Server Error** if there’s an issue with file writing.
@@ -99,8 +90,6 @@ The application handles errors like:
 - **Invalid input**: Returns `400 Bad Request` when the First Name or Last Name fields are missing.
 - **Duplicate user**: Returns `409 Conflict` if the user already exists in the database (text file).
 - **File read/write errors**: Returns `500 Internal Server Error` when there's an issue with file operations.
-- 
-```
 
 ## Status Codes Used
 

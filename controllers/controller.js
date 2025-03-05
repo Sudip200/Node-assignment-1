@@ -1,15 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const {readFile, writeFile} = require('../helpers/handlefiles')
+const { readFile, writeFile } = require("../helpers/handlefiles");
 /* Home Route (/)
 Display a greeting message when accessing http://localhost:3000/.
 Ensure the server returns HTTP status code 200 OK.
 */
 const homePagehandler = (req, res) => {
-
   res.setHeader("Content-Type", "text/html");
   res.statusCode = 200;
-  res.write('Welcome to employee management');
+  res.write("Welcome to employee management");
   res.end();
 };
 /* User Submission Route (/add-user)
@@ -28,59 +27,72 @@ const sendUserData = (req, res) => {
       parsedBody = JSON.parse(parsedBody);
       let firstname = parsedBody.firstname;
       let lastname = parsedBody.lastname;
-
-      if (firstname === '' || lastname === '') {
+      const isValidName = (name) => /^[A-Za-z]+$/.test(name);
+      if (firstname === "" || lastname === "") {
         res.statusCode = 400;
-        res.write('Please enter all fields');
+        res.write("Please enter all fields");
         res.end();
         return;
       }
-
-      readFile(path.join(__dirname, "..", "data", "users.json"), (err) => {
-        if (err) {
-          console.log(err);
-          res.statusCode = 500;
-          res.write('Internal Server error');
-          res.end();
-          return;
-        }
-      }, (data) => {
-        try {
-          let users = JSON.parse(data);
-          for (let user of users) {
-            if (user.firstname === firstname && user.lastname === lastname) {
-              res.statusCode = 400;
-              res.write("User already exists");
-              res.end();
-              return;
-            }
+      if (!isValidName(firstname) || !isValidName(lastname)) {
+        res.statusCode = 400;
+        res.write("Invalid Name");
+        res.end();
+        return;
+      }
+      readFile(
+        path.join(__dirname, "..", "data", "users.json"),
+        (err) => {
+          if (err) {
+            console.log(err);
+            res.statusCode = 500;
+            res.write("Internal Server error");
+            res.end();
+            return;
           }
-          users.push({ firstname, lastname });
-          writeFile(path.join(__dirname, "..", "data", "users.json"), JSON.stringify(users), (err) => {
-            if (err) {
-              console.log(err);
-              res.statusCode = 500;
-              res.write('Internal Server error');
-              res.end();
-              return;
+        },
+        (data) => {
+          try {
+            let users = JSON.parse(data);
+            for (let user of users) {
+              if (user.firstname === firstname && user.lastname === lastname) {
+                res.statusCode = 400;
+                res.write("User already exists");
+                res.end();
+                return;
+              }
             }
-          },()=>{
-            res.statusCode = 201;
-            res.write('User added successfully');
+            users.push({ firstname, lastname });
+            writeFile(
+              path.join(__dirname, "..", "data", "users.json"),
+              JSON.stringify(users, null, 4),
+              (err) => {
+                if (err) {
+                  console.log(err);
+                  res.statusCode = 500;
+                  res.write("Internal Server error");
+                  res.end();
+                  return;
+                }
+              },
+              () => {
+                res.statusCode = 201;
+                res.write("User added successfully");
+                res.end();
+              }
+            );
+          } catch (parseError) {
+            console.log(parseError);
+            res.statusCode = 500;
+            res.write("Internal Server error");
             res.end();
           }
-        );
-        } catch (parseError) {
-          console.log(parseError);
-          res.statusCode = 500;
-          res.write('Internal Server error');
-          res.end();
         }
-      });
+      );
     } catch (error) {
       console.log(error);
       res.statusCode = 500;
-      res.write('Internal Server error');
+      res.write("Internal Server error");
       res.end();
     }
   });
@@ -93,50 +105,53 @@ const listUsers = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.statusCode = 200;
   try {
-    readFile(path.join(__dirname, "..", "data", "users.json"), (err) => {
-      if (err) {
-        console.log(err);
-        res.statusCode = 500;
-        res.write('Internal Server error');
-        res.end();
-        return;
-      }
-    },
-    (data) => {
-      try {
-        const users = JSON.parse(data.toString());
-        if (users.length === 0) {
-          res.statusCode = 404;
-          res.write('No user found please add user');
+    readFile(
+      path.join(__dirname, "..", "data", "users.json"),
+      (err) => {
+        if (err) {
+          console.log(err);
+          res.statusCode = 500;
+          res.write("Internal Server error");
           res.end();
           return;
         }
-        res.write(data.toString());
-        res.end();
-      } catch (parseError) {
-        console.log(parseError);
-        res.statusCode = 500;
-        res.write('Internal Server error');
-        res.end();
+      },
+      (data) => {
+        try {
+          const users = JSON.parse(data.toString());
+          if (users.length === 0) {
+            res.statusCode = 404;
+            res.write("No user found please add user");
+            res.end();
+            return;
+          }
+          res.write(data.toString());
+          res.end();
+        } catch (parseError) {
+          console.log(parseError);
+          res.statusCode = 500;
+          res.write("Internal Server error");
+          res.end();
+        }
       }
-    });
+    );
   } catch (error) {
     console.log(error);
     res.statusCode = 500;
-    res.write('Internal Server error');
+    res.write("Internal Server error");
     res.end();
   }
 };
 // 404 page
-const handleNotFound =(req,res)=>{
+const handleNotFound = (req, res) => {
   res.statusCode = 404;
   res.setHeader("Content-Type", "text/html");
-  res.write('404 not found')
-  res.end()
-}
+  res.write("404 not found");
+  res.end();
+};
 module.exports = {
   homePagehandler,
   sendUserData,
   listUsers,
-  handleNotFound
+  handleNotFound,
 };
