@@ -15,6 +15,7 @@ const writeFile = (path,content,errorcb ,nextcb)=>{
             errorcb(err)
             return
         }
+        
         nextcb()
     })
 }

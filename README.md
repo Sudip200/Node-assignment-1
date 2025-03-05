@@ -73,15 +73,14 @@ This is a simple User Management System built using **Node.js** without the use 
 
     ```json
     {
-        "firstname": "John",
-        "lastname": "Doe"
+        "firstname": "sudi",
+        "lastname": "das"
     }
     ```
 
 - **Response**: 
   - **201 Created** if the user is successfully added.
   - **400 Bad Request** if any field is empty.
-  - **409 Conflict** if the user already exists.
   - **500 Internal Server Error** if there’s an issue with file writing.
 
 ### 3. **User List**: `GET /users`
@@ -109,5 +108,4 @@ The application handles errors like:
 - **201 Created**: Successfully created a new user.
 - **400 Bad Request**: Invalid request (e.g., empty fields).
 - **404 Not Found**: No users found or an invalid route accessed.
-- **409 Conflict**: Duplicate user found (same First Name and Last Name).
 - **500 Internal Server Error**: Server-side error, typically related to file operations.

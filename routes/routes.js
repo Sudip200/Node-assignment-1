@@ -8,7 +8,7 @@ const {
 const routesHandler = (req, res) => {
     console.log(req.url, req.method);
     // home page
-    if (req.url === "/") {
+    if (req.url === "/" && req.method === "GET") {
       return homePagehandler(req, res);
     }
     // add user

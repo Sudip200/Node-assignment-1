@@ -19,59 +19,70 @@ Store user data in a text file, preventing duplicate entries.
 const sendUserData = (req, res) => {
   let body = [];
   res.setHeader("Content-Type", "text/html");
-  req.on("data", (chunck) => {
-    // on data event
-    body.push(chunck);
+  req.on("data", (chunk) => {
+    body.push(chunk);
   });
   req.on("end", () => {
-    // on end event
-    let parsedBody = Buffer.concat(body).toString();
-    parsedBody = JSON.parse(parsedBody);
-    let firstname = parsedBody.firstname;
-    let lastname = parsedBody.lastname;
-       // check if fields are empty
-    if(firstname ==='' || lastname ===''){
-      res.statusCode = 400
-      res.write('Please enter all fields');
-      res.end()
-      return
-    }
-    readFile( path.join(__dirname, "..", "data", "users.json"),(err)=>{
-      console.log(err);
-      res.statusCode =500
-      res.write('Internal Server error')
-      res.end();
-      return;
-    },(data)=>{
-      let users = JSON.parse(data);
-      for (let user of users) {
-        console.log(user, firstname, lastname);
+    try {
+      let parsedBody = Buffer.concat(body).toString();
+      parsedBody = JSON.parse(parsedBody);
+      let firstname = parsedBody.firstname;
+      let lastname = parsedBody.lastname;
 
-        // check if user already exists
-        if (user.firstname === firstname && user.lastname === lastname) {
-          res.write("User already exists")
+      if (firstname === '' || lastname === '') {
+        res.statusCode = 400;
+        res.write('Please enter all fields');
+        res.end();
+        return;
+      }
+
+      readFile(path.join(__dirname, "..", "data", "users.json"), (err) => {
+        if (err) {
+          console.log(err);
+          res.statusCode = 500;
+          res.write('Internal Server error');
           res.end();
           return;
         }
-      }
-      users.push({ firstname, lastname });
-      console.log(users);
-      writeFile( path.join(__dirname, "..", "data", "users.json"),JSON.stringify(users),(err)=>{
-        console.log(err)
-        res.write('Internal Server error')
-        res.statusCode =500
-        res.end()
-        return
-      },()=>{
-       // user added successfully
-        res.statusCode =201
-        res.write('User added sucessfully')
-        
-        res.end();
-      })
+      }, (data) => {
+        try {
+          let users = JSON.parse(data);
+          for (let user of users) {
+            if (user.firstname === firstname && user.lastname === lastname) {
+              res.statusCode = 400;
+              res.write("User already exists");
+              res.end();
+              return;
+            }
+          }
+          users.push({ firstname, lastname });
+          writeFile(path.join(__dirname, "..", "data", "users.json"), JSON.stringify(users), (err) => {
+            if (err) {
+              console.log(err);
+              res.statusCode = 500;
+              res.write('Internal Server error');
+              res.end();
+              return;
+            }
+          },()=>{
+            res.statusCode = 201;
+            res.write('User added successfully');
+            res.end();
+          }
+        );
+        } catch (parseError) {
+          console.log(parseError);
+          res.statusCode = 500;
+          res.write('Internal Server error');
+          res.end();
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      res.statusCode = 500;
+      res.write('Internal Server error');
+      res.end();
     }
-  )
-    
   });
 };
 /* User List Route (/users)
@@ -81,28 +92,40 @@ If no users exist, return 404 Not Found with a message prompting user submission
 const listUsers = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.statusCode = 200;
-  readFile(path.join(__dirname, "..", "data", "users.json"),(err)=>{
-    if (err) {
-      console.log(err);
-      res.statusCode= 500
-      res.write('Internal Server error')
-      res.end();
-      return;
-
-    }
-  },
-  (data)=>{
-   // check if no user found
-    if (JSON.parse(data.toString()).length === 0) {
-      res.statusCode=404;
-      res.write('No user found')
-      res.end();
-      return;
-    }
-    console.log(data.toString())
-    res.write(data.toString())
+  try {
+    readFile(path.join(__dirname, "..", "data", "users.json"), (err) => {
+      if (err) {
+        console.log(err);
+        res.statusCode = 500;
+        res.write('Internal Server error');
+        res.end();
+        return;
+      }
+    },
+    (data) => {
+      try {
+        const users = JSON.parse(data.toString());
+        if (users.length === 0) {
+          res.statusCode = 404;
+          res.write('No user found please add user');
+          res.end();
+          return;
+        }
+        res.write(data.toString());
+        res.end();
+      } catch (parseError) {
+        console.log(parseError);
+        res.statusCode = 500;
+        res.write('Internal Server error');
+        res.end();
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.statusCode = 500;
+    res.write('Internal Server error');
     res.end();
-  })
+  }
 };
 // 404 page
 const handleNotFound =(req,res)=>{
