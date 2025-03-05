@@ -88,7 +88,6 @@ This is a simple User Management System built using **Node.js** without the use 
 The application handles errors like:
 
 - **Invalid input**: Returns `400 Bad Request` when the First Name or Last Name fields are missing.
-- **Duplicate user**: Returns `409 Conflict` if the user already exists in the database (text file).
 - **File read/write errors**: Returns `500 Internal Server Error` when there's an issue with file operations.
 
 ## Status Codes Used
