@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { readFile, writeFile } = require("../helpers/handlefiles");
+const { validateUserInput } = require("../helpers/validators.js");
 /* Home Route (/)
 Display a greeting message when accessing http://localhost:3000/.
 Ensure the server returns HTTP status code 200 OK.
@@ -15,6 +16,7 @@ const homePagehandler = (req, res) => {
 Accept user input via body parsing (First Name & Last Name).
 Store user data in a text file, preventing duplicate entries.
 */
+
 const sendUserData = (req, res) => {
   let body = [];
   res.setHeader("Content-Type", "text/html");
@@ -27,16 +29,11 @@ const sendUserData = (req, res) => {
       parsedBody = JSON.parse(parsedBody);
       let firstname = parsedBody.firstname;
       let lastname = parsedBody.lastname;
-      const isValidName = (name) => /^[A-Za-z]+$/.test(name);
-      if (firstname === "" || lastname === "") {
+
+      const validation = validateUserInput(firstname, lastname);
+      if (!validation.isValid) {
         res.statusCode = 400;
-        res.write("Please enter all fields");
-        res.end();
-        return;
-      }
-      if (!isValidName(firstname) || !isValidName(lastname)) {
-        res.statusCode = 400;
-        res.write("Invalid Name");
+        res.write(validation.message);
         res.end();
         return;
       }
