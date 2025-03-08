@@ -1,7 +1,5 @@
 const http = require("http");
-
-const {routesHandler} = require('./routes/routes')
-const path = require("path");
+const { routesHandler } = require("./routes/routes");
 const server = http.createServer(routesHandler);
 
 /* 1. Set Up a Node.js Server
